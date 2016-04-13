@@ -21,7 +21,7 @@ class Category extends Model
      * Validation rules
      */
     public $rules = [
-        'name' => 'required|unique:tiipiik_catalog_categories',
+        'name' => 'required',
         'slug' => 'required',
     ];
 
@@ -29,12 +29,12 @@ class Category extends Model
      * @var array Translatable fields
      */
     public $translatable = ['name', 'description'];
-    
+
     /**
      * @var array Guarded fields
      */
     protected $guarded = ['*'];
-    
+
     public $belongsToMany = [
         'products' => [
             'Tiipiik\Catalog\Models\Product',
@@ -46,7 +46,7 @@ class Category extends Model
     public $attachOne = [
         'cover' => ['System\Models\File']
     ];
-    
+
      /**
      * Add translation support to this model, if available.
      * @return void
@@ -67,7 +67,7 @@ class Category extends Model
             $model->implement[] = 'RainLab.Translate.Behaviors.TranslatableModel';
         });
     }
-    
+
     /*
      *
      */
@@ -75,7 +75,7 @@ class Category extends Model
     {
         return $this->orderBy('name')->lists('name', 'id');
     }
-    
+
     /*
      * Return the number of product for given category
      */
@@ -95,13 +95,13 @@ class Category extends Model
 
         return $this->url = $controller->pageUrl($pageName, $params);
     }
-    
+
     public static function categoryDetails($param)
     {
         if (!$category = self::whereSlug($param['category'])->first()) {
             return null;
         }
-        
+
         return $category;
     }
 
