@@ -265,7 +265,7 @@ class Category extends Model
                 'items' => []
             ];
 
-            $categories = self::orderBy('name')->get();
+            $categories = self::whereNull('parent_id')->orderBy('name')->get();
             foreach ($categories as $category) {
                 $categoryItem = [
                     'title' => $category->name,
