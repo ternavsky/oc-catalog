@@ -16,6 +16,7 @@ class Categories extends ComponentBase
     public $renderview;
     public $product_categories;
     public $subCategoriesTitle;
+    public $currentCategory;
 
     public function componentDetails()
     {
@@ -80,50 +81,80 @@ class Categories extends ComponentBase
     {
         return ['menu_list' => 'Menu list', 'image_list' => 'Image list'];
     }
-    
+
     public function getCategoryPageOptions()
     {
         return [''=>'- none -'] + Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
     }
-    
+
     public function onRun()
     {
-        $this->renderview                   = $this->property('renderView');
-        $this->noProductCategoriesMessage   = $this->property('noProductCategoriesMessage');
-        $this->productCategoryPage          = $this->property('categoryPage');
-        $this->currentProductCategorySlug   = $this->property('slug');
-        $this->subCategoriesTitle           = $this->property('subCategoriesTitle');
-        $this->product_categories           = $this->loadCategories();
+        $this->renderview                 = $this->property('renderView');
+        $this->noProductCategoriesMessage = $this->property('noProductCategoriesMessage');
+        $this->productCategoryPage        = $this->property('categoryPage');
+        $this->currentProductCategorySlug = $this->property('slug');
+        $this->subCategoriesTitle         = $this->property('subCategoriesTitle');
+        $this->currentCategory            = Category::findBySlugPath($this->property('slug'));
+        $this->product_categories         = $this->loadCategories();
+
+        if (!$this->currentCategory) {
+            $this->currentCategory = new Category;
+        }
     }
 
     protected function loadCategories()
     {
-        $categories = Category::orderBy('name');
-        
         // If param for displaying subcategories is checked
         if ($this->property('subCategories') == 1) {
-            $category = Category::whereSlug($this->property('slug'))->first();
-            $categories->whereParentId($category->id);
+            if ($this->currentCategory) {
+                $categories = $this->currentCategory->children();
+            } else {
+                $categories = [];
+            }
+        } else {
+            $categories = new Category;
+            //$categories = $categories->getEagerRoot();
+            $categories = $categories->getAllRoot();
         }
-        
-       // Hide empty categories
+
+        // Hide empty categories
+        /*
         if ($this->property('displayEmpty') == 0 || $this->property('displayEmpty') === false) {
             $categories->whereHas('products', function ($query) {
                 $query->whereIsPublished(1);
             });
         }
-        
-        $categories = $categories->get();
-        
-        if (!$categories) {
-            return null;
-        }
-        
+        */
+        //$categories = $categories->get();
+
+        if (!$categories) { return null; }
+
         /*
          * Add a "url" helper attribute for linking to each category
          */
         $categories->each(function ($category) {
             $category->setUrl($this->productCategoryPage, $this->controller);
+
+            if ($this->currentCategory) {
+                if ($category->id == $this->currentCategory->id) {
+                    $category->isActive = true;
+                }
+
+                if (
+                        $category->id == $this->currentCategory->parent_id ||
+                        $category->id == $this->currentCategory->id
+                ) {
+                    $category->childActive = true;
+                    $subcats = $category->getChildren();
+                    $subcats->each(function($subcat) {
+                        $subcat->setUrl($this->productCategoryPage, $this->controller);
+                        if ($subcat->id == $this->currentCategory->id) {
+                            $subcat->isActive = true;
+                        }
+                    });
+                    $category->children = $subcats;
+                }
+            }
         });
 
         return $categories;

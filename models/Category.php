@@ -91,9 +91,35 @@ class Category extends Model
      */
     public function setUrl($pageName, $controller)
     {
-        $params = ['slug' => $this->slug];
+        $params = ['slug' => $this->getSlugPath()];
 
         return $this->url = $controller->pageUrl($pageName, $params);
+    }
+
+    public function getSlugPath()
+    {
+        $path = '';
+        $parents = $this->getParents();
+        foreach ($parents as $parent) {
+            $path .= $parent->slug.'/';
+        }
+        $path .= $this->slug;
+        return $path;
+    }
+
+    public static function findBySlugPath($path)
+    {
+        $slugs = explode('/', $path);
+        $category = null;
+        foreach ($slugs as $slug) {
+            if ($category) {
+                $category = $category->children()->whereSlug($slug)->first();
+            } else {
+                $category = Category::whereSlug($slug)->first();
+            }
+            if (!$category) return null;
+        }
+        return $category;
     }
 
     public static function categoryDetails($param)
