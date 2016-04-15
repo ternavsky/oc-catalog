@@ -16,7 +16,7 @@ class ProductList extends ComponentBase
      * @var string
      */
     public $category;
-    
+
     /*
      * A collection of products from the current category,
      * or the full products list
@@ -27,13 +27,14 @@ class ProductList extends ComponentBase
     public $noProductsMessage;
     public $productParam;
     public $productPageIdParam;
+    private $currentPage = 1;
 
     /**
      * If the post list should be ordered by another attribute.
      * @var string
      */
     public $sortOrder;
-    
+
 
     public function componentDetails()
     {
@@ -111,8 +112,8 @@ class ProductList extends ComponentBase
             ],
         ];
     }
-    
-    
+
+
     public function getProductPageOptions()
     {
         return [''=>'- none -'] + Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
@@ -122,14 +123,14 @@ class ProductList extends ComponentBase
     {
         return Product::$allowedSortingOptions;
     }
-    
+
     public function onRun()
     {
         // Use strict method only to avoid conflicts whith other plugins
         $this->productPage = $this->property('productPage');
-        
+
         $category = $this->category = $this->loadCategory();
-        
+
         // Return error only if category filter is not used
         if ($this->property('useCategoryFilter') == 0) {
             if (!$category) {
@@ -137,9 +138,9 @@ class ProductList extends ComponentBase
                 return $this->controller->run('404');
             }
         }
-        $currentPage = post('page');
+        $this->currentPage = input('page', 1);
         $products = $this->products = $this->listProducts();
-        
+
         /*
          * Pagination
          */
@@ -148,34 +149,37 @@ class ProductList extends ComponentBase
             $queryArr['page'] = '';
             $paginationUrl = Request::url() . '?' . http_build_query($queryArr);
 
-            if ($currentPage > ($lastPage = $products->lastPage()) && $currentPage > 1) {
+            if ($this->currentPage > ($lastPage = $products->lastPage()) && $this->currentPage > 1) {
                 return Redirect::to($paginationUrl . $lastPage);
             }
 
             $this->page['paginationUrl'] = $paginationUrl;
         }
-        
+
         $this->noProductsMessage = $this->property('noProductsMessage');
         $this->productParam = $this->property('productParam');
         $this->productPageIdParam = $this->property('categorySlug');
     }
-    
+
     public function listProducts()
     {
         $categories = $this->category ? $this->category->id : null;
-        
+
         if ($this->property('useCategoryFilter') == 1 && $this->property('categoryFilter') != '') {
             $category = Category::whereSlug($this->property('categoryFilter'))->first();
             $categories = $category->id;
         }
-        
+
         $products = Product::with('customfields')->with('categories')->listFrontEnd([
-            'page' => $this->property('pageParam'),
+            //'page'       => $this->property('pageParam'),
+            'page'       => $this->currentPage,
             'sort'       => $this->property('sortOrder'),
-            'perPage' => $this->property('productsPerPage'),
+            'perPage'    => $this->property('productsPerPage'),
             'categories' => $categories,
         ]);
-        
+
+        //dd($products);
+
         // Injects related custom fields
         $products->each(function ($product) {
             $product->setUrl($this->property('productPage'), $this->controller);
@@ -189,22 +193,25 @@ class ProductList extends ComponentBase
                 }
             }
         });
-        
+
         return $products;
     }
-    
+
     protected function loadCategory()
     {
+        /*
         $category = Category::make()->categoryDetails([
             'category' => $this->property('categorySlug'),
         ]);
-        
+        */
+        $category = Category::findBySlugPath($this->property('categorySlug'));
+
         if (empty($category)) {
             return null;
         }
-            
+
         $this->page->title = $category->name;
-        
+
         return $category;
     }
 }

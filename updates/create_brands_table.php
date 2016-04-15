@@ -20,9 +20,9 @@ class CreateBrandsTable extends Migration
 
         // Relation between brand and products
         Schema::table('tiipiik_catalog_products', function ($table) {
-            $table->integer('brand_id')->after('group_id')->unsigned();
+            $table->integer('brand_id')->after('group_id')->unsigned()->nullable();
         });
-        
+
         Schema::create('tiipiik_catalog_products_brands', function ($table) {
             $table->engine = 'InnoDB';
             $table->integer('product_id')->unsigned();
@@ -35,7 +35,7 @@ class CreateBrandsTable extends Migration
     {
         Schema::dropIfExists('tiipiik_catalog_brands');
         Schema::dropIfExists('tiipiik_catalog_products_brands');
-        
+
         if (Schema::hasColumn('tiipiik_catalog_products', 'brand_id')) {
             Schema::table('tiipiik_catalog_products', function ($table) {
                 $table->dropColumn('brand_id');

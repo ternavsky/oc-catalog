@@ -12,7 +12,7 @@ use SystemException;
 class Product extends Model
 {
     use \October\Rain\Database\Traits\Validation;
-    
+
     private static $product_group;
     private static $brand;
     private static $stores;
@@ -31,7 +31,7 @@ class Product extends Model
         'price' => 'required|regex:/^(0+)?\d{0,10}(\.\d{0,2})?$/',
         'discount_price' => 'regex:/^(0+)?\d{0,10}(\.\d{0,2})?$/',
     ];
-    
+
     public $customMessages = [
         'price.regex' => 'tiipiik.catalog::lang.validation.price_regex',
         'discount_price.regex' => 'tiipiik.catalog::lang.validation.discount_price_regex',
@@ -80,16 +80,16 @@ class Product extends Model
     public $attachMany = [
         'featured_images' => ['System\Models\File'],
     ];
-    
+
     public $belongsTo = [
         'group' => ['Tiipiik\Catalog\Models\Group'],
         'brand' => ['Tiipiik\Catalog\Models\Brand'],
     ];
-    
+
     public $hasMany = [
         'customfields' => ['Tiipiik\Catalog\Models\CustomValue', 'order' => 'custom_field_id'],
     ];
-    
+
     public $belongsToMany = [
         'categories' => [
             'Tiipiik\Catalog\Models\Category',
@@ -102,7 +102,7 @@ class Product extends Model
             'order' => 'name',
         ],
     ];
-    
+
      /**
      * Add translation support to this model, if available.
      * @return void
@@ -124,7 +124,7 @@ class Product extends Model
 
         });
     }
-    
+
     /**
      * Lists products for the front end
      * @param  array $options Display options
@@ -207,7 +207,7 @@ class Product extends Model
                 $q->whereIn('id', $stores);
             });
         }
-            
+
         return $obj->paginate($perPage, $page);
     }
 
@@ -254,7 +254,7 @@ class Product extends Model
     {
         $fields->stores->hidden = (Settings::get('activate_stores') == 1) ? false : true;
     }
-    
+
     /*
      * Add existing custom fields to newly created product
      */
@@ -262,7 +262,7 @@ class Product extends Model
     {
         self::updateCustomFieldsAndValues('create');
     }
-    
+
     /*
      * Get group before update to handle group change
      */
@@ -271,12 +271,12 @@ class Product extends Model
         $product = self::find($this->id);
         self::$product_group = $product->group_id;
     }
-    
+
     public function afterUpdate()
     {
         self::updateCustomFieldsAndValues('update');
     }
-    
+
     /*
      * Delete all relations before deleting product
      */
@@ -284,39 +284,39 @@ class Product extends Model
     {
         // Find the related custom value
         $customValues = CustomValueModel::where('product_id', '=', $this->id)->get();
-        
+
         $customValues->each(function ($value) {
             // Delete relation
             $relation = DB::table('tiipiik_catalog_csf_csv')
                 ->where('custom_value_id', '=', $value->id)
                 ->delete();
-                
+
             // Delete custom value
             CustomValueModel::find($value->id)->delete();
         });
     }
-    
+
     public function updateCustomFieldsAndValues($context)
     {
         // If updating, delete fields and values only if group has changed
         if ($context == 'update' && self::$product_group != $this->group_id) {
             CustomValueModel::whereProductId($this->id)->delete();
         }
-                    
+
         // Get custom fields from group
         $custom_field_ids = DB::table('tiipiik_catalog_group_field')
             ->where('group_id', '=', $this->group_id)
             ->get();
-        
+
         if ($custom_field_ids) {
             foreach ($custom_field_ids as $custom_field_id) {
                 $field_exists = CustomValueModel::whereProductId($this->id)
                     ->whereCustomFieldId($custom_field_id->custom_field_id)
                     ->first();
-                
+
                 if (!$field_exists) {
                     $custom_fields = CustomFieldModel::whereId($custom_field_id->custom_field_id)->get();
-                    
+
                     $custom_fields->each(function ($custom_field) {
                         // Add to product as custom value, with default value
                         $custom_value = CustomValueModel::create([
@@ -324,7 +324,7 @@ class Product extends Model
                             'custom_field_id' => $custom_field->id,
                             'value' => $custom_field->default_value,
                         ]);
-                                    
+
                         // Create relation between custom value and custom field for this product
                         DB::insert(
                             'insert into tiipiik_catalog_csf_csv (custom_value_id, custom_field_id)

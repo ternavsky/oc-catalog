@@ -122,6 +122,7 @@ class Category extends Model
         return $category;
     }
 
+    /*
     public static function categoryDetails($param)
     {
         if (!$category = self::whereSlug($param['category'])->first()) {
@@ -130,6 +131,7 @@ class Category extends Model
 
         return $category;
     }
+    */
 
     /**
      * Handler for the pages.menuitem.getTypeInfo event.
