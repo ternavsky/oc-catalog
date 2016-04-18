@@ -70,9 +70,6 @@ class ProductDetails extends ComponentBase
 
     public function onRun()
     {
-        $this->addCss('https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.1/ekko-lightbox.min.css');
-        $this->addJs('https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.1/ekko-lightbox.js');
-
         $product = $this->loadProduct();
 
         if (!$product) {
