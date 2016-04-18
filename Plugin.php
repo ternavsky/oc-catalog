@@ -68,13 +68,14 @@ class Plugin extends PluginBase
     public function registerComponents()
     {
         return [
-            '\Tiipiik\Catalog\Components\Categories' => 'categories',
-            '\Tiipiik\Catalog\Components\ProductList' => 'product_list',
+            '\Tiipiik\Catalog\Components\Categories'     => 'categories',
+            '\Tiipiik\Catalog\Components\ProductList'    => 'product_list',
             '\Tiipiik\Catalog\Components\ProductDetails' => 'product_details',
-            '\Tiipiik\Catalog\Components\StoreList' => 'store_list',
-            '\Tiipiik\Catalog\Components\StoreDetails' => 'store_details',
-            '\Tiipiik\Catalog\Components\BrandList' => 'brand_list',
-            '\Tiipiik\Catalog\Components\BrandDetails' => 'brand_details',
+            '\Tiipiik\Catalog\Components\StoreList'      => 'store_list',
+            '\Tiipiik\Catalog\Components\StoreDetails'   => 'store_details',
+            '\Tiipiik\Catalog\Components\BrandList'      => 'brand_list',
+            '\Tiipiik\Catalog\Components\BrandDetails'   => 'brand_details',
+            '\Tiipiik\Catalog\Components\Breadcrumbs'    => 'breadcrumbs',
         ];
     }
 

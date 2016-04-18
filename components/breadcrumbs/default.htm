@@ -1,0 +1,14 @@
+{% set breadcrumbs = __SELF__.breadcrumbs %}
+{% if breadcrumbs %}
+    <ol class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+            <li class="{{ breadcrumb.isActive ? 'active' : '' }}">
+                {% if breadcrumb.isActive %}
+                    {{ breadcrumb.title }}
+                {% else %}
+                    <a href="{{ breadcrumb.url }}">{{ breadcrumb.title }}</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ol>
+{% endif %}
