@@ -341,16 +341,19 @@ class Product extends Model
      * @param string $pageName
      * @param Cms\Classes\Controller $controller
      */
-    public function setUrl($pageName, $controller)
+    public function setUrl($category_slug, $pageName, $controller)
     {
         $params = [
-            'id' => $this->id,
-            'slug' => $this->slug,
+            'id'       => $this->id,
+            'slug'     => $this->slug,
+            'category' => $category_slug,
         ];
 
+        /*
         if (array_key_exists('categories', $this->getRelations())) {
             $params['category'] = $this->categories->count() ? $this->categories->first()->slug : null;
         }
+        */
 
         return $this->url = $controller->pageUrl($pageName, $params);
     }

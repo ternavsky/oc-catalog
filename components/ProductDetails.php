@@ -52,7 +52,7 @@ class ProductDetails extends ComponentBase
             ],
         ];
     }
-    
+
     public function getCategoryPageOptions()
     {
         return [''=>'- Select page -'] + Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
@@ -70,8 +70,11 @@ class ProductDetails extends ComponentBase
 
     public function onRun()
     {
+        $this->addCss('https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.1/ekko-lightbox.min.css');
+        $this->addJs('https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.1/ekko-lightbox.js');
+
         $product = $this->loadProduct();
-        
+
         if (!$product) {
             // The line below works but return a line of details
             //return Response::make( $this->controller->run('404'), 404 );
@@ -79,11 +82,11 @@ class ProductDetails extends ComponentBase
             $this->setStatusCode(404);
             return $this->controller->run('404');
         }
-        
+
         $this->categoryPage = $this->page['categoryPage'] = $this->property('categoryPage');
         $this->storePage = $this->page['storePage'] = $this->property('storePage');
         $this->product = $this->page['product'] = $product;
-        
+
         $this->page->title = ($product->meta_title != null)
             ? $product->meta_title
             : $product->title;
@@ -100,7 +103,7 @@ class ProductDetails extends ComponentBase
         $this->brandPage = $this->page['brandPage'] = $this->property('brandPage');
         $this->storePage = $this->page['storePage'] = $this->property('storePage');
         $this->secureUrls = $this->page['secureUrls'] = $this->property('secureUrls');
-        
+
         $product = ProductModel::whereSlug($slug)
             ->whereIsPublished(1)
             ->with('customfields')
@@ -139,7 +142,7 @@ class ProductDetails extends ComponentBase
                 $product->attributes[$field->template_code] = $customfield->value;
             }
         }
-        
+
         return $product;
     }
 }

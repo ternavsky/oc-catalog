@@ -24,6 +24,13 @@ fields:
 
 tabs:
     fields:
+        featured_images:
+            tab: Images
+            label: tiipiik.catalog::lang.products.featured_images
+            type: fileupload
+            mode: image
+            imageHeight: 260
+            imageWidth: 260
 
         items_available:
             tab: tiipiik.catalog::lang.products.details_tab_title
@@ -87,12 +94,3 @@ tabs:
             tab: Stores
             type: relation
             commentAbove: Select the store this product is related to
-
-secondaryTabs:
-    fields:
-        featured_images:
-            label: tiipiik.catalog::lang.products.featured_images
-            type: fileupload
-            mode: image
-            imageHeight: 260
-            imageWidth: 260

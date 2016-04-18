@@ -181,8 +181,8 @@ class ProductList extends ComponentBase
         //dd($products);
 
         // Injects related custom fields
-        $products->each(function ($product) {
-            $product->setUrl($this->property('productPage'), $this->controller);
+        $products->each(function ($product) use ($categories) {
+            $product->setUrl($this->category->getSlugPath(), $this->property('productPage'), $this->controller);
 
             if ($product->customfields) {
                 foreach ($product->customfields as $customfield) {
