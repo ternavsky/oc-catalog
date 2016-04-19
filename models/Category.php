@@ -294,6 +294,7 @@ class Category extends Model
             ];
 
             $categories = self::whereNull('parent_id')->orderBy('name')->get();
+            /*
             foreach ($categories as $category) {
                 $categoryItem = [
                     'title' => $category->name,
@@ -305,7 +306,47 @@ class Category extends Model
 
                 $result['items'][] = $categoryItem;
             }
+            */
+            $hasActiveChild = function($items) use (&$hasActiveChild) {
+                foreach ($items as $item) {
+                    if ($item['isActive']) {
+                        return true;
+                    }
+
+                    $result = $hasActiveChild($item['items']);
+                    if ($result) {
+                        return $result;
+                    }
+                }
+            };
+
+            $iterator = function ($categories) use (&$iterator, &$item, &$theme, $url,  &$hasActiveChild) {
+                $branch = [];
+
+                foreach ($categories as $category) {
+
+                    $branchItem = [];
+                    $branchItem['url'] = self::getCategoryPageUrl($item->cmsPage, $category, $theme);
+                    $branchItem['isActive'] = $branchItem['url'] == $url;
+                    $branchItem['title'] = $category->name;
+                    $branchItem['mtime'] = $category->updated_at;
+
+                    if ($category->children) {
+                        $branchItem['items'] = $iterator($category->children);
+                    }
+
+                    $branchItem['isChildActive'] = $hasActiveChild($branchItem['items']);
+
+                    $branch[] = $branchItem;
+                }
+
+                return $branch;
+            };
+
+            $result['items'] = $iterator($categories);
         }
+
+        //dd($result);
 
         return $result;
     }
@@ -334,7 +375,7 @@ class Category extends Model
         }
 
         $paramName = substr(trim($matches[1]), 1);
-        $url = CmsPage::url($page->getBaseFileName(), [$paramName => $category->slug]);
+        $url = CmsPage::url($page->getBaseFileName(), [$paramName => $category->getSlugPath()]);
 
         return $url;
     }
