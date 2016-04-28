@@ -96,6 +96,14 @@ class Category extends Model
         return $this->url = $controller->pageUrl($pageName, $params);
     }
 
+    public function getUrl($pageName)
+    {
+        $controller = new \Cms\Classes\Controller;
+        $params = ['slug' => $this->getSlugPath()];
+
+        return $this->url = $controller->pageUrl($pageName, $params);
+    }
+
     public function getSlugPath()
     {
         $path = '';

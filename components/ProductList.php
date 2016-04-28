@@ -28,6 +28,8 @@ class ProductList extends ComponentBase
     public $productParam;
     public $productPageIdParam;
     private $currentPage = 1;
+    public $productPage;
+    public $categoryPage;
 
     /**
      * If the post list should be ordered by another attribute.
@@ -81,6 +83,13 @@ class ProductList extends ComponentBase
                 'default'     => 'products/:slug',
                 'group'       => 'Products',
             ],
+            'categoryPage' => [
+                'title'       => 'tiipiik.catalog::lang.component.categories.param.category_page_title',
+                'description' => 'tiipiik.catalog::lang.component.categories.param.category_page_desc',
+                'type'        => 'dropdown',
+                'default'     => 'category',
+                'group'       => 'Products',
+            ],
             'productPageSlug' => [
                 'title'       => 'tiipiik.catalog::lang.component.product_list.param.product_page_id_title',
                 'description' => 'tiipiik.catalog::lang.component.product_list.param.product_page_id_desc',
@@ -113,6 +122,10 @@ class ProductList extends ComponentBase
         ];
     }
 
+    public function getCategoryPageOptions()
+    {
+        return [''=>'- none -'] + Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
+    }
 
     public function getProductPageOptions()
     {
@@ -128,6 +141,7 @@ class ProductList extends ComponentBase
     {
         // Use strict method only to avoid conflicts whith other plugins
         $this->productPage = $this->property('productPage');
+        $this->categoryPage = $this->property('categoryPage');
 
         $category = $this->category = $this->loadCategory();
 
@@ -139,7 +153,17 @@ class ProductList extends ComponentBase
             }
         }
         $this->currentPage = input('page', 1);
+
         $products = $this->products = $this->listProducts();
+
+        $subcategories = $category->children()->get();
+        $subcategories->each(function($subcat) {
+            $subcat->items = $subcat->products()->take($this->property('productsPerPage'))->get();
+            $subcat->items_count = count($subcat->items);
+            $subcat->all_items_count = $subcat->products()->count();
+        });
+
+        $this->page['subcategories'] = $subcategories;
 
         /*
          * Pagination
@@ -182,7 +206,7 @@ class ProductList extends ComponentBase
 
         // Injects related custom fields
         $products->each(function ($product) use ($categories) {
-            $product->setUrl($this->category->getSlugPath(), $this->property('productPage'), $this->controller);
+            //$product->setUrl($this->category->getSlugPath(), $this->property('productPage'), $this->controller);
 
             if ($product->customfields) {
                 foreach ($product->customfields as $customfield) {

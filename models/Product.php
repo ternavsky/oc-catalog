@@ -82,8 +82,9 @@ class Product extends Model
     ];
 
     public $belongsTo = [
-        'group' => ['Tiipiik\Catalog\Models\Group'],
-        'brand' => ['Tiipiik\Catalog\Models\Brand'],
+        'group'    => ['Tiipiik\Catalog\Models\Group'],
+        'brand'    => ['Tiipiik\Catalog\Models\Brand'],
+        'category' => ['Tiipiik\Catalog\Models\Category'],
     ];
 
     public $hasMany = [
@@ -356,5 +357,20 @@ class Product extends Model
         */
 
         return $this->url = $controller->pageUrl($pageName, $params);
+    }
+
+    public function getUrl($pageName)
+    {
+        if (!$this->category) return false;
+
+        $params = [
+            'id'       => $this->id,
+            'slug'     => $this->slug,
+            'category' => $this->category->getSlugPath(),
+        ];
+
+        $controller = new \Cms\Classes\Controller;
+
+        return $controller->pageUrl($pageName, $params);
     }
 }

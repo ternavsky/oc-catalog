@@ -62,10 +62,20 @@ tabs:
             placeholder: tiipiik.catalog::lang.products.description_ph
             type: richeditor
 
+        category:
+            tab: tiipiik.catalog::lang.products.category_tab_title
+            type: relation
+            #list: $/tiipiik/catalog/models/category/columns.yaml
+            #prompt: tiipiik.catalog::lang.products.category_prompt
+            #nameFrom: name
+            label: tiipiik.catalog::lang.products.category_label
+            required: true
+
         categories:
             tab: tiipiik.catalog::lang.products.category_tab_title
             type: relation
             commentAbove: tiipiik.catalog::lang.products.categories_cmt
+            label: tiipiik.catalog::lang.products.categories_label
 
         group:
             tab: Group

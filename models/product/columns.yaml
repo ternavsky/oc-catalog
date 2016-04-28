@@ -10,8 +10,15 @@ columns:
     title:
         label: tiipiik.catalog::lang.products.title
 
-    categories:
+    category:
         label: tiipiik.catalog::lang.products.category
+        relation: category
+        select: name
+        searchable: true
+        sortable: false
+
+    categories:
+        label: tiipiik.catalog::lang.products.categories
         relation: categories
         select: name
         searchable: true
