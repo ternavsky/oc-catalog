@@ -22,10 +22,12 @@ fields:
         label: tiipiik.catalog::lang.products.published
         type: switch
 
+
 tabs:
     fields:
+
         featured_images:
-            tab: Images
+            tab: tiipiik.catalog::lang.products.details_tab_title
             label: tiipiik.catalog::lang.products.featured_images
             type: fileupload
             mode: image
@@ -63,7 +65,7 @@ tabs:
             type: richeditor
 
         category:
-            tab: tiipiik.catalog::lang.products.category_tab_title
+            tab: tiipiik.catalog::lang.products.details_tab_title
             type: relation
             #list: $/tiipiik/catalog/models/category/columns.yaml
             #prompt: tiipiik.catalog::lang.products.category_prompt
@@ -72,13 +74,13 @@ tabs:
             required: true
 
         categories:
-            tab: tiipiik.catalog::lang.products.category_tab_title
+            tab: tiipiik.catalog::lang.products.details_tab_title
             type: relation
             commentAbove: tiipiik.catalog::lang.products.categories_cmt
             label: tiipiik.catalog::lang.products.categories_label
 
         group:
-            tab: Group
+            tab: tiipiik.catalog::lang.products.details_tab_title
             type: relation
             required: true
 

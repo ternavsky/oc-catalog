@@ -26,7 +26,7 @@ class Product extends Model
      * Validation rules
      */
     public $rules = [
-        'title' => 'required|unique:tiipiik_catalog_products',
+        'title' => 'required',
         'slug' => 'required',
         'price' => 'required|regex:/^(0+)?\d{0,10}(\.\d{0,2})?$/',
         'discount_price' => 'regex:/^(0+)?\d{0,10}(\.\d{0,2})?$/',
