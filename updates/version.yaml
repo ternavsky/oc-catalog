@@ -84,3 +84,6 @@
 1.11.5:
     - Add product main category
     - add_product_main_category.php
+1.11.6:
+    - Add product full description
+    - add_product_full_description.php

@@ -64,6 +64,12 @@ tabs:
             placeholder: tiipiik.catalog::lang.products.description_ph
             type: richeditor
 
+        full_description:
+            tab: tiipiik.catalog::lang.products.details_tab_title
+            label: tiipiik.catalog::lang.products.full_description
+            placeholder: tiipiik.catalog::lang.products.description_ph
+            type: richeditor
+
         category:
             tab: tiipiik.catalog::lang.products.details_tab_title
             type: relation

@@ -3,23 +3,23 @@
 use Schema;
 use October\Rain\Database\Updates\Migration;
 
-class AddProductMainCategory extends Migration
+class AddProductFullDescription extends Migration
 {
 
     public function up()
     {
-        if ( ! Schema::hasColumn('tiipiik_catalog_products', 'category_id')) {
+        if ( ! Schema::hasColumn('tiipiik_catalog_products', 'full_description')) {
             Schema::table('tiipiik_catalog_products', function ($table) {
-                $table->integer('category_id')->after('id');
+                $table->text('full_description');
             });
         }
     }
 
     public function down()
     {
-        if (Schema::hasColumn('tiipiik_catalog_products', 'category_id')) {
+        if (Schema::hasColumn('tiipiik_catalog_products', 'full_description')) {
             Schema::table('tiipiik_catalog_products', function ($table) {
-                $table->dropColumn('group_id');
+                $table->dropColumn('full_description');
             });
         }
     }
